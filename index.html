@@ -47,6 +47,134 @@ footer{padding:20px;color:#91b8a2;font-size:12px}
 </div>
 </section>
 
+<script>
+let x = 0;
+let y = 0;
+let won = false;
+
+function startGame() {
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  restart();
+}
+
+function move(dx, dy) {
+  if (won) return;
+
+  const car = document.getElementById("car");
+  x = Math.max(-100, Math.min(100, x + dx));
+  y = Math.max(-260, Math.min(0, y + dy));
+
+  car.style.transform = `translate(${x}px, ${y}px)`;
+
+  const c = car.getBoundingClientRect();
+  const p = document.getElementById("parking").getBoundingClientRect();
+
+  if (c.left >= p.left && c.right <= p.right &&
+      c.top >= p.top && c.bottom <= p.bottom) {
+    won = true;
+    document.getElementById("message").textContent =
+      "🏆 Perfect Parking! You Win!";
+  } else {
+    document.getElementById("message").textContent =
+      "🚗 Keep driving to the yellow box!";
+  }
+}
+
+document.addEventListener("keydown", function(event) {
+  const keys = {
+    ArrowLeft: [-10, 0],
+    ArrowRight: [10, 0],
+    ArrowUp: [0, -10],
+    ArrowDown: [0, 10]
+  };
+
+  if (keys[event.key] &&
+      !document.getElementById("game").classList.contains("hidden")) {
+    event.preventDefault();
+    move(...keys[event.key]);
+  }
+});
+
+function restart() {
+  x = 0;
+  y = 0;
+  won = false;
+  document.getElementById("car").style.transform = "translate(0, 0)";
+  document.getElementById("message").textContent =
+    "Reach the yellow parking box!";
+}
+
+function goHome() {
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+}
+</script>
+  
+<script>
+let x = 0;
+let y = 0;
+let won = false;
+
+function startGame() {
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  restart();
+}
+
+function move(dx, dy) {
+  if (won) return;
+
+  const car = document.getElementById("car");
+  x = Math.max(-100, Math.min(100, x + dx));
+  y = Math.max(-260, Math.min(0, y + dy));
+
+  car.style.transform = `translate(${x}px, ${y}px)`;
+
+  const c = car.getBoundingClientRect();
+  const p = document.getElementById("parking").getBoundingClientRect();
+
+  if (c.left >= p.left && c.right <= p.right &&
+      c.top >= p.top && c.bottom <= p.bottom) {
+    won = true;
+    document.getElementById("message").textContent =
+      "🏆 Perfect Parking! You Win!";
+  } else {
+    document.getElementById("message").textContent =
+      "🚗 Keep driving to the yellow box!";
+  }
+}
+
+document.addEventListener("keydown", function(event) {
+  const keys = {
+    ArrowLeft: [-10, 0],
+    ArrowRight: [10, 0],
+    ArrowUp: [0, -10],
+    ArrowDown: [0, 10]
+  };
+
+  if (keys[event.key] &&
+      !document.getElementById("game").classList.contains("hidden")) {
+    event.preventDefault();
+    move(...keys[event.key]);
+  }
+});
+
+function restart() {
+  x = 0;
+  y = 0;
+  won = false;
+  document.getElementById("car").style.transform = "translate(0, 0)";
+  document.getElementById("message").textContent =
+    "Reach the yellow parking box!";
+}
+
+function goHome() {
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("home").classList.remove("hidden");
+}
+</script>
+
 <section id="game" class="screen hidden">
 <div class="card">
 <h2>🚘 Parking Level 1</h2>
