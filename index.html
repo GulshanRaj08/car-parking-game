@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Parking Game</title>
+  <style>
+    body {
+      margin: 0;
+      background: #15202b;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 { color: #62d9ff; }
+    canvas {
+      background: #39754a;
+      width: 95%;
+      max-width: 360px;
+      border: 3px solid white;
+      border-radius: 12px;
+      touch-action: none;
+    }
+    button {
+      font-size: 22px;
+      padding: 14px 22px;
+      margin: 5px;
+      border: 0;
+      border-radius: 10px;
+      background: #1688ff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚗 Car Parking</h1>
+  <p id="message">Car ko parking box tak le jao!</p>
+  <canvas id="game" width="320" height="480"></canvas>
+  <div>
+    <button onclick="move(-1,0)">⬅️</button>
+    <button onclick="move(1,0)">➡️</button>
+    <button onclick="move(0,-1)">⬆️</button>
+    <button onclick="move(0,1)">⬇️</button>
+  </div>
+  <button onclick="resetGame()">🔄 Restart</button>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    let car = { x: 140, y: 380 };
+    const parking = { x: 110, y: 70, w: 100, h: 60 };
+
+    function draw() {
+      ctx.clearRect(0, 0, 320, 480);
+
+      ctx.fillStyle = "#555b63";
+      ctx.fillRect(40, 0, 240, 480);
+
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([18, 14]);
+      ctx.beginPath();
+      ctx.moveTo(160, 0);
+      ctx.lineTo(160, 480);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.strokeStyle = "#ffe66d";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(parking.x, parking.y, parking.w, parking.h);
+      ctx.fillStyle = "white";
+      ctx.font = "14px Arial";
+      ctx.fillText("PARK HERE", 122, 105);
+
+      ctx.fillStyle = "#ff3333";
+      ctx.fillRect(car.x, car.y, 32, 48);
+      ctx.fillStyle = "#bdeaff";
+      ctx.fillRect(car.x + 5, car.y + 7, 22, 12);
+      ctx.fillRect(car.x + 5, car.y + 28, 22, 10);
+    }
+
+    function move(dx, dy) {
+      car.x += dx * 10;
+      car.y += dy * 10;
+      car.x = Math.max(42, Math.min(246, car.x));
+      car.y = Math.max(2, Math.min(430, car.y));
+      draw();
+
+      if (car.x >= parking.x && car.x + 32 <= parking.x + parking.w &&
+          car.y >= parking.y && car.y + 48 <= parking.y + parking.h) {
+        document.getElementById("message").textContent =
+          "🎉 Great! Car parked successfully!";
+      } else {
+        document.getElementById("message").textContent =
+          "Car ko yellow parking box mein le jao!";
+      }
+    }
+
+    function resetGame() {
+      car = { x: 140, y: 380 };
+      document.getElementById("message").textContent =
+        "Car ko parking box tak le jao!";
+      draw();
+    }
+
+    draw();
+  </script>
+</body>
+  </html>
+  
