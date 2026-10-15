@@ -70,38 +70,7 @@ footer{padding:20px;color:#91b8a2;font-size:12px}
 
 <footer>Made with 💚 by Gulshan Raj</footer>
 
-<script>
-let x=0,y=0;
-function startGame(){
-document.getElementById('home').classList.add('hidden');
-document.getElementById('game').classList.remove('hidden');
-restart();
-}
-function move(dx,dy){
-const car=document.getElementById('car');
-const road=document.getElementById('road');
-x=Math.max(-90,Math.min(90,x+dx));
-y=Math.max(-135,Math.min(135,y+dy));
-car.style.transform=`translate(${x}px,${-y}px)`;
-const r=road.getBoundingClientRect();
-const c=car.getBoundingClientRect();
-const p=document.getElementById('parking').getBoundingClientRect();
-if(c.left>p.left && c.right<p.right && c.top>p.top && c.bottom<p.bottom){
-document.getElementById('message').textContent='🎉 Perfect Parking! You win!';
-}else{
-document.getElementById('message').textContent='Keep driving carefully!';
-}
-}
-function restart(){
-x=0;y=0;
-document.getElementById('car').style.transform='translate(0,0)';
-document.getElementById('message').textContent='Reach the yellow parking box!';
-}
-function goHome(){
-document.getElementById('game').classList.add('hidden');
-document.getElementById('home').classList.remove('hidden');
-}
-</script>
+
 </body>
   </html>
   
