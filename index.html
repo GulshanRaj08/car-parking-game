@@ -58,29 +58,56 @@ function startGame() {
   restart();
 }
 
+let steering = 0;
+let throttle = false;
+let braking = false;
+
+function setControl(control, pressed) {
+  if (control === "left") steering = pressed ? -1 : 0;
+  if (control === "right") steering = pressed ? 1 : 0;
+  if (control === "gas") throttle = pressed;
+  if (control === "brake") braking = pressed;
+}
+
 function move(dx, dy) {
   if (won) return;
 
   const car = document.getElementById("car");
+
   x = Math.max(-100, Math.min(100, x + dx));
   y = Math.max(-260, Math.min(0, y + dy));
 
   car.style.transform = `translate(${x}px, ${y}px)`;
+}
 
-  const c = car.getBoundingClientRect();
-  const p = document.getElementById("parking").getBoundingClientRect();
+function driveStep() {
+  if (document.getElementById("game").classList.contains("hidden")) return;
 
-  if (c.left >= p.left && c.right <= p.right &&
-      c.top >= p.top && c.bottom <= p.bottom) {
-    won = true;
-    document.getElementById("message").textContent =
-      "🏆 Perfect Parking! You Win!";
-  } else {
-    document.getElementById("message").textContent =
-      "🚗 Keep driving to the yellow box!";
+  if (steering !== 0) x += steering * 2;
+  if (throttle) y -= 2;
+  if (braking) y += 2;
+
+  x = Math.max(-100, Math.min(100, x));
+  y = Math.max(-260, Math.min(0, y));
+
+  document.getElementById("car").style.transform =
+    `translate(${x}px, ${y}px)`;
+
+  if (throttle || braking || steering !== 0) {
+    const c = document.getElementById("car").getBoundingClientRect();
+    const p = document.getElementById("parking").getBoundingClientRect();
+
+    if (c.left >= p.left && c.right <= p.right &&
+        c.top >= p.top && c.bottom <= p.bottom) {
+      won = true;
+      document.getElementById("message").textContent =
+        "🏆 Perfect Parking! You Win!";
+    }
   }
 }
 
+setInterval(driveStep, 30);
+  
 document.addEventListener("keydown", function(event) {
   const keys = {
     ArrowLeft: [-10, 0],
@@ -94,17 +121,22 @@ document.addEventListener("keydown", function(event) {
     event.preventDefault();
     move(...keys[event.key]);
   }
-});
-
-function restart() {
+}). 
+  
+  function restart() {
   x = 0;
   y = 0;
   won = false;
-  document.getElementById("car").style.transform = "translate(0, 0)";
-  document.getElementById("message").textContent =
-    "Reach the yellow parking box!";
-}
+  steering = 0;
+  throttle = false;
+  braking = false;
 
+  document.getElementById("car").style.transform =
+    "translate(0px, 0px)";
+  document.getElementById("message").textContent =
+    "Use steering, gas and brake to park!";
+  }
+ 
 function goHome() {
   document.getElementById("game").classList.add("hidden");
   document.getElementById("home").classList.remove("hidden");
@@ -121,12 +153,34 @@ function goHome() {
 <div id="car"></div>
 </div>
 <div id="message">Ready, driver?</div>
+
 <div class="controls">
-<button class="secondary" onclick="move(-18,0)">⬅️</button>
-<button class="secondary" onclick="move(0,-18)">⬆️</button>
-<button class="secondary" onclick="move(18,0)">➡️</button>
-<button class="secondary" onclick="move(0,18)" style="grid-column:2">⬇️</button>
+  <button class="secondary"
+    onpointerdown="setControl('left',true)"
+    onpointerup="setControl('left',false)"
+    onpointerleave="setControl('left',false)"
+    onpointercancel="setControl('left',false)">⬅️</button>
+
+  <button class="secondary"
+    onpointerdown="setControl('gas',true)"
+    onpointerup="setControl('gas',false)"
+    onpointerleave="setControl('gas',false)"
+    onpointercancel="setControl('gas',false)">⬆️ GAS</button>
+
+  <button class="secondary"
+    onpointerdown="setControl('right',true)"
+    onpointerup="setControl('right',false)"
+    onpointerleave="setControl('right',false)"
+    onpointercancel="setControl('right',false)">➡️</button>
+
+  <button class="secondary"
+    style="grid-column:2"
+    onpointerdown="setControl('brake',true)"
+    onpointerup="setControl('brake',false)"
+    onpointerleave="setControl('brake',false)"
+    onpointercancel="setControl('brake',false)">⬇️ BRAKE</button>
 </div>
+  
 <button onclick="restart()">↻ Restart</button>
 <button class="secondary" onclick="goHome()">⌂ Home</button>
 </div>
